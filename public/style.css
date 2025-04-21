@@ -1,45 +1,133 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
-  font-family: Arial, sans-serif;
-  background: #f4f4f4;
-  padding: 30px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f1f1f1;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
 }
 
-.chat-container {
-  width: 400px;
-  margin: auto;
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+h2 {
+  margin: 20px 0 10px;
+  color: #333;
 }
 
-.chat-box {
-  height: 300px;
-  overflow-y: auto;
-  border: 1px solid #ccc;
+#messages {
+  list-style: none;
   padding: 10px;
+  width: 100%;
+  max-width: 600px;
+  flex-grow: 1;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
   margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
 }
 
-.chat-box div {
-  margin: 5px 0;
+li {
+  max-width: 75%;
+  margin: 5px 10px;
+  padding: 10px 14px;
+  border-radius: 18px;
+  line-height: 1.4;
+  position: relative;
+  word-wrap: break-word;
 }
 
 .user {
-  text-align: right;
-  color: blue;
+  align-self: flex-end;
+  background-color: #dcf8c6;
+  color: #000;
+  border-bottom-right-radius: 0;
 }
 
 .bot {
-  text-align: left;
-  color: green;
+  align-self: flex-start;
+  background-color: #f0f0f0;
+  color: #333;
+  border-bottom-left-radius: 0;
 }
 
-input[type="text"] {
-  width: 70%;
-  padding: 10px;
+.admin {
+  align-self: flex-start;
+  background-color: #ffe3b3;
+  color: #333;
+  border-bottom-left-radius: 0;
+}
+
+.system {
+  align-self: center;
+  color: #888;
+  font-size: 14px;
+  font-style: italic;
+  background: none;
+  padding: 0;
+}
+
+form {
+  display: flex;
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 20px;
+  padding: 0 10px;
+}
+
+#message {
+  flex: 1;
+  padding: 10px 15px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  outline: none;
+  font-size: 16px;
 }
 
 button {
-  padding: 10px;
+  background-color: #0084ff;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  margin-left: 10px;
+  border-radius: 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+}
+
+button:hover {
+  background-color: #006fd6;
+}
+
+.admin-question {
+  width: 100%;
+  max-width: 600px;
+  background-color: #fff3e0;
+  border: 1px solid #ffd54f;
+  padding: 12px;
+  margin-top: 10px;
+  border-left: 4px solid #ff9800;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-question input {
+  margin-top: 8px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.admin-question button {
+  margin-top: 6px;
+  width: fit-content;
+  background-color: #ff9800;
 }

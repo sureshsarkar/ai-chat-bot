@@ -1,60 +1,58 @@
-function sendMessage() {
-    const userInput = document.getElementById("userInput").value.trim();
-    if (!userInput) return;
-  
-    displayMessage(userInput, 'user');
-    getBotResponse(userInput.toLowerCase());
-  
-    document.getElementById("userInput").value = "";
+const socket = io();
+
+const form = document.getElementById('chat-form');
+const input = document.getElementById('message');
+const messages = document.getElementById('messages');
+const isAdmin = window.location.pathname.includes('admin');
+
+if (isAdmin) {
+  socket.emit('registerAsAdmin');
+  appendMessage("🛠️ You are logged in as Admin", 'system');
+}
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  appendMessage(`You: ${msg}`, 'user');
+  socket.emit('userMessage', msg);
+  input.value = '';
+});
+
+socket.on('botReply', (msg) => {
+  appendMessage(`Bot: ${msg}`, 'bot');
+});
+
+socket.on('adminNotify', ({ question, userId }) => {
+  const div = document.createElement('div');
+  div.className = 'admin-question';
+  div.innerHTML = `
+    <p><strong>User:</strong> ${question}</p>
+    <input type="text" placeholder="Type reply..." data-user="${userId}" data-question="${question}" />
+    <button onclick="sendAdminReply(this)">Reply</button>
+  `;
+  messages.appendChild(div);
+});
+
+function appendMessage(text, type) {
+  const li = document.createElement('li');
+  li.textContent = text;
+  li.className = type;
+  messages.appendChild(li);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function sendAdminReply(button) {
+  const input = button.previousElementSibling;
+  const answer = input.value.trim();
+  const userId = input.dataset.user;
+  const question = input.dataset.question;
+
+  if (answer) {
+    socket.emit('adminResponse', { answer, userId, question });
+    appendMessage(`Replied to user: ${answer}`, 'admin');
+    input.disabled = true;
+    button.disabled = true;
   }
-  
-  function displayMessage(message, sender) {
-    const chatbox = document.getElementById("chatbox");
-    const msgDiv = document.createElement("div");
-    msgDiv.classList.add(sender);
-    msgDiv.textContent = message;
-    chatbox.appendChild(msgDiv);
-    chatbox.scrollTop = chatbox.scrollHeight;
-  }
-  
-  // Store unknown question
-  let lastUnknownQuestion = null;
-  
-  function getBotResponse(input) {
-    const storedAnswers = JSON.parse(localStorage.getItem("customBotAnswers")) || {};
-  
-    let response;
-  
-    // Check predefined answers
-    if (input.includes("hello") || input.includes("hi")) {
-      response = "Hello! How can I help you?";
-    } else if (input.includes("your name")) {
-      response = "I'm your friendly chatbot!";
-    } else if (input.includes("help")) {
-      response = "Sure, I can help! Ask me something simple.";
-    } else if (input.includes("bye")) {
-      response = "Goodbye! Have a great day!";
-    }
-    // Check if user had trained the bot earlier
-    else if (storedAnswers[input]) {
-      response = storedAnswers[input];
-    }
-    // Unknown input — ask user to teach
-    else if (!lastUnknownQuestion) {
-      lastUnknownQuestion = input;
-      response = `I don't know how to respond to that. What should I reply when someone says "${input}"?`;
-    }
-    // User provides a reply — store it
-    else {
-      storedAnswers[lastUnknownQuestion] = input;
-      localStorage.setItem("customBotAnswers", JSON.stringify(storedAnswers));
-      response = `Got it! I'll remember that for next time. ✅`;
-      lastUnknownQuestion = null;
-    }
-  
-    // Show bot message after delay
-    setTimeout(() => {
-      displayMessage(response, 'bot');
-    }, 600);
-  }
-  
+}
