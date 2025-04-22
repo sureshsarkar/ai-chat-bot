@@ -5,6 +5,20 @@ const input = document.getElementById('message');
 const messages = document.getElementById('messages');
 const isAdmin = window.location.pathname.includes('admin');
  
+
+
+let newMsgCount = 0;
+let originalTitle = document.title;
+
+function updateTitleWithCount() {
+  if (newMsgCount > 0) {
+    document.title = `🔔 (${newMsgCount}) ${originalTitle}`;
+  } else {
+    document.title = originalTitle;
+  }
+}
+
+
 if (isAdmin) {
   socket.emit('registerAsAdmin');
   appendMessage("🛠️ You are logged in as Admin", 'system');
@@ -18,10 +32,6 @@ form.addEventListener('submit', (e) => {
   appendMessage(`You: ${msg}`, 'user');
   socket.emit('userMessage', msg);
   input.value = '';
-});
-
-socket.on('botReply', (msg) => {
-  appendMessage(`Bot: ${msg}`, 'bot');
 });
 
  
@@ -40,7 +50,21 @@ document.addEventListener('click', () => {
 }, { once: true }); // unlocks only on the first interaction
 
 
+socket.on('botReply', (msg) => {
+  appendMessage(`Bot: ${msg}`, 'bot');
+
+  if (!isWindowFocused) {
+    newMsgCount++;
+    updateTitleWithCount();
+  }
+});
+
 socket.on('adminNotify', ({ question, userId }) => {
+
+  newMsgCount++;
+  updateTitleWithCount();
+
+
   audio.play();
   const div = document.createElement('div');
   div.className = 'admin-question';
@@ -49,14 +73,15 @@ socket.on('adminNotify', ({ question, userId }) => {
     <input type="text" placeholder="Type reply..." data-user="${userId}" data-question="${question}" />
     <button onclick="sendAdminReply(this)">Reply</button>
   `;
+
   messages.appendChild(div);
-  
+
 });
 
 function appendMessage(text, type) {
   const li = document.createElement('li');
   li.textContent = text;
-  li.className = type;
+  li.className = type+" shake";
   messages.appendChild(li);
   messages.scrollTop = messages.scrollHeight;
 }
@@ -68,10 +93,26 @@ function sendAdminReply(button) {
   const question = input.dataset.question;
 
   if (answer) {
-
     socket.emit('adminResponse', { answer, userId, question });
-    appendMessage(`Replied to user: ${answer}`, 'admin');
+
+    // Disable input & button
     input.disabled = true;
     button.disabled = true;
+
+    // Create reply element
+    const replyDiv = document.createElement('div');
+    replyDiv.className = 'admin-reply';
+    replyDiv.innerHTML = `<p><strong>You replied:</strong> ${answer}</p>`;
+
+    // Insert after the current question div
+    const parentDiv = button.parentElement;
+    parentDiv.insertAdjacentElement('afterend', replyDiv);
+
+    // Reduce new message count
+    if (newMsgCount > 0) {
+      newMsgCount--;
+      updateTitleWithCount();
+    }
   }
 }
+

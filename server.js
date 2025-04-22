@@ -74,25 +74,27 @@ io.on('connection', (socket) => {
   });
 
 
-  const audio1 = new Audio('https://digitalhubsolution.com/front/images/livechat-sound.mp3');
-let soundEnabled1 = false;
+//   const audio1 = new Audio('https://digitalhubsolution.com/front/images/livechat-sound.mp3');
+// let soundEnabled1 = false;
 
-document.addEventListener('click', () => {
-  audio1.play().then(() => {
-    audio1.pause();
-    audio1.currentTime = 0;
-    soundEnabled1 = true;
-    console.log('Audio unlocked');
-  });
-}, { once: true }); // unlocks only on the first interaction
+// document.addEventListener('click', () => {
+//   audio1.play().then(() => {
+//     audio1.pause();
+//     audio1.currentTime = 0;
+//     soundEnabled1 = true;
+//     console.log('Audio unlocked');
+//   });
+// }, { once: true }); // unlocks only on the first interaction
 
 
 
 
   socket.on('adminResponse', ({ answer, userId, question }) => {
+   
+    
     qaMap[question] = answer;
-    audio.play();
     io.to(userId).emit('botReply', `🧑‍💼 Admin: ${answer}`);
+    
   });
 
   socket.on('disconnect', () => {
