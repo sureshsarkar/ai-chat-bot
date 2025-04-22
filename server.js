@@ -75,6 +75,7 @@ io.on('connection', (socket) => {
 
   socket.on('adminResponse', ({ answer, userId, question }) => {
     qaMap[question] = answer;
+    audio.play();
     io.to(userId).emit('botReply', `🧑‍💼 Admin: ${answer}`);
   });
 

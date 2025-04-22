@@ -68,7 +68,7 @@ function sendAdminReply(button) {
   const question = input.dataset.question;
 
   if (answer) {
-    audio.play();
+
     socket.emit('adminResponse', { answer, userId, question });
     appendMessage(`Replied to user: ${answer}`, 'admin');
     input.disabled = true;
