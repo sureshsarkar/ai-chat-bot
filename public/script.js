@@ -51,8 +51,7 @@ document.addEventListener('click', () => {
 }, { once: true }); // unlocks only on the first interaction
 
 
-socket.on('botReply', ({msg}) => {
-  console.log(msg.msg);
+socket.on('botReply', ({msg}) => { 
   
   appendMessage(`Bot: ${msg}`, 'bot');
 
