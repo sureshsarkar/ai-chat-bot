@@ -27,7 +27,7 @@ socket.on('botReply', (msg) => {
  
 
 
-const audio = new Audio('https://ai-chat-bot-u8t5.onrender.com/public/assets/livechat-sound.mp3');
+const audio = new Audio('https://digitalhubsolution.com/front/images/livechat-sound.mp3');
 let soundEnabled = false;
 
 document.addEventListener('click', () => {
