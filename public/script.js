@@ -4,7 +4,7 @@ const form = document.getElementById('chat-form');
 const input = document.getElementById('message');
 const messages = document.getElementById('messages');
 const isAdmin = window.location.pathname.includes('admin');
-
+ 
 if (isAdmin) {
   socket.emit('registerAsAdmin');
   appendMessage("🛠️ You are logged in as Admin", 'system');
@@ -24,7 +24,24 @@ socket.on('botReply', (msg) => {
   appendMessage(`Bot: ${msg}`, 'bot');
 });
 
+ 
+
+
+const audio = new Audio('https://ai-chat-bot-u8t5.onrender.com/public/assets/livechat-sound.mp3');
+let soundEnabled = false;
+
+document.addEventListener('click', () => {
+  audio.play().then(() => {
+    audio.pause();
+    audio.currentTime = 0;
+    soundEnabled = true;
+    console.log('Audio unlocked');
+  });
+}, { once: true }); // unlocks only on the first interaction
+
+
 socket.on('adminNotify', ({ question, userId }) => {
+  audio.play();
   const div = document.createElement('div');
   div.className = 'admin-question';
   div.innerHTML = `
@@ -33,6 +50,7 @@ socket.on('adminNotify', ({ question, userId }) => {
     <button onclick="sendAdminReply(this)">Reply</button>
   `;
   messages.appendChild(div);
+  
 });
 
 function appendMessage(text, type) {
@@ -50,6 +68,7 @@ function sendAdminReply(button) {
   const question = input.dataset.question;
 
   if (answer) {
+    audio.play();
     socket.emit('adminResponse', { answer, userId, question });
     appendMessage(`Replied to user: ${answer}`, 'admin');
     input.disabled = true;
