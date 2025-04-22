@@ -9,6 +9,7 @@ const isAdmin = window.location.pathname.includes('admin');
 
 let newMsgCount = 0;
 let originalTitle = document.title;
+let isWindowFocused = true;
 
 function updateTitleWithCount() {
   if (newMsgCount > 0) {
@@ -50,7 +51,9 @@ document.addEventListener('click', () => {
 }, { once: true }); // unlocks only on the first interaction
 
 
-socket.on('botReply', (msg) => {
+socket.on('botReply', ({msg}) => {
+  console.log(msg.msg);
+  
   appendMessage(`Bot: ${msg}`, 'bot');
 
   if (!isWindowFocused) {
@@ -115,4 +118,3 @@ function sendAdminReply(button) {
     }
   }
 }
-

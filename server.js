@@ -52,6 +52,7 @@ io.on('connection', (socket) => {
     ];
 
     const matchedAuto = autoReplies.find(rule => rule.pattern.test(input));
+// console.log(input);
 
     if (matchedAuto) {
       socket.emit('botReply', matchedAuto.reply);
